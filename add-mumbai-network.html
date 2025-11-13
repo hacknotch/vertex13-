@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Mumbai Network to MetaMask</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #f6851b;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #e2761b;
+            transform: scale(1.05);
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦊 Add Polygon Mumbai to MetaMask</h1>
+        
+        <div class="info">
+            <strong>Network Details:</strong><br>
+            Network Name: Polygon Mumbai<br>
+            Chain ID: 80001<br>
+            Currency: MATIC<br>
+            RPC URL: https://rpc-mumbai.maticvigil.com
+        </div>
+
+        <button onclick="addMumbaiNetwork()">
+            ➕ Add Mumbai Network to MetaMask
+        </button>
+
+        <div id="message"></div>
+
+        <p style="color: #666; margin-top: 30px; font-size: 14px;">
+            Click the button above and approve in MetaMask popup.<br>
+            This is a testnet for development - completely safe!
+        </p>
+    </div>
+
+    <script>
+        async function addMumbaiNetwork() {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = '';
+
+            // Check if MetaMask is installed
+            if (typeof window.ethereum === 'undefined') {
+                messageDiv.innerHTML = '<p class="error">❌ MetaMask is not installed!<br>Please install MetaMask extension first.</p>';
+                return;
+            }
+
+            try {
+                // Request to add Mumbai network
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [{
+                        chainId: '0x13881', // 80001 in hex
+                        chainName: 'Polygon Mumbai',
+                        nativeCurrency: {
+                            name: 'MATIC',
+                            symbol: 'MATIC',
+                            decimals: 18
+                        },
+                        rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
+                        blockExplorerUrls: ['https://mumbai.polygonscan.com/']
+                    }]
+                });
+
+                messageDiv.innerHTML = '<p class="success">✅ Success!<br>Mumbai network added to MetaMask!<br>You can close this page now.</p>';
+                
+            } catch (error) {
+                if (error.code === 4001) {
+                    messageDiv.innerHTML = '<p class="error">❌ You rejected the request.<br>Please try again and click "Approve".</p>';
+                } else {
+                    messageDiv.innerHTML = '<p class="error">❌ Error: ' + error.message + '</p>';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
